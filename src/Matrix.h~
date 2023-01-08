@@ -1,0 +1,171 @@
+#pragma once
+#include <cassert>
+#include <vector>
+#include <functional>
+#include <iostream>
+
+float randomFloat(float min, float max) {
+  return float(rand()) / float(RAND_MAX) * (max - min) + min;
+}
+
+template <size_t r, size_t c> class Matrix {
+private:
+  size_t mRows = r;
+  size_t mCols = c;
+
+public:
+  float mm[r][c]{0};
+
+  // getters
+  size_t getRows() const { return mRows; };
+  size_t getCols() const { return mCols; };
+
+  Matrix(){};
+
+  ~Matrix(){};
+
+  void print() {
+    for (size_t i = 0; i < mRows; i++) {
+      std::cout << "[";
+      for (size_t j = 0; j < mCols; j++) {
+        std::cout << mm[i][j];
+        if (j < mCols - 1)
+          std::cout << " ";
+      }
+      std::cout << "]\n";
+    }
+  }
+
+  void random() {
+    for (size_t i = 0; i < mRows; i++) {
+      for (size_t j = 0; j < mCols; j++) {
+        mm[i][j] = (int)randomFloat(0, 10);
+      }
+    }
+  }
+
+  void reset() {
+    for (size_t i = 0; i < mRows; i++) {
+      for (size_t j = 0; j < mCols; j++) {
+        mm[i][j] = 0;
+      }
+    }
+  }
+
+  // Scalar
+  void operator+=(const float rhs) {
+    for (size_t i = 0; i < mRows; i++) {
+      for (size_t j = 0; j < mCols; j++) {
+        mm[i][j] += rhs;
+      }
+    }
+  }
+
+  void operator-=(const float rhs) {
+    for (size_t i = 0; i < mRows; i++) {
+      for (size_t j = 0; j < mCols; j++) {
+        mm[i][j] -= rhs;
+      }
+    }
+  }
+
+  void operator/=(const float rhs) {
+    for (size_t i = 0; i < mRows; i++) {
+      for (size_t j = 0; j < mCols; j++) {
+        mm[i][j] /= rhs;
+      }
+    }
+  }
+
+  void operator*=(const float rhs) {
+    for (size_t i = 0; i < mRows; i++) {
+      for (size_t j = 0; j < mCols; j++) {
+        mm[i][j] *= rhs;
+      }
+    }
+  }
+
+  // Element-wise
+  void operator+=(const Matrix rhs) {
+    assert(rhs.getRows() == mRows && rhs.getCols() == mCols);
+    for (size_t i = 0; i < mRows; i++) {
+      for (size_t j = 0; j < mCols; j++) {
+        mm[i][j] += rhs.mm[i][j];
+      }
+    }
+  }
+
+  void operator-=(const Matrix rhs) {
+    assert(rhs.getRows() == mRows && rhs.getCols() == mCols);
+    for (size_t i = 0; i < mRows; i++) {
+      for (size_t j = 0; j < mCols; j++) {
+        mm[i][j] -= rhs.mm[i][j];
+      }
+    }
+  }
+
+  void operator/=(const Matrix rhs) {
+    assert(rhs.getRows() == mRows && rhs.getCols() == mCols);
+    for (size_t i = 0; i < mRows; i++) {
+      for (size_t j = 0; j < mCols; j++) {
+        mm[i][j] /= rhs.mm[i][j];
+      }
+    }
+  }
+
+  void operator*=(const Matrix rhs) {
+    assert(rhs.getRows() == mRows && rhs.getCols() == mCols);
+    for (size_t i = 0; i < mRows; i++) {
+      for (size_t j = 0; j < mCols; j++) {
+        mm[i][j] *= rhs.mm[i][j];
+      }
+    }
+  }
+
+  void transpose() {
+    // create new mm, rows, cols
+    float newMM[mCols][mRows];
+    size_t newRows = mCols;
+    size_t newCols = mRows;
+    for (size_t i = 0; i < newRows; i++) {
+      for (size_t j = 0; j < newCols; j++) {
+        newMM[i][j] = 0;
+      }
+    }
+
+    // transpose newMM
+    for (size_t i = 0; i < newRows; i++) {
+      for (size_t j = 0; j < newCols; j++) {
+        newMM[i][j] = mm[j][i];
+      }
+    }
+
+    // change current mm, rows and cols
+    for (size_t i = 0; i < newRows; i++) {
+      for (size_t j = 0; j < newCols; j++) {
+        mm[i][j] = newMM[i][j];
+      }
+    }
+    mRows = newRows;
+    mCols = newCols;
+  }
+
+  void map(std::function<float(float)> func){
+    for (size_t i = 0; i < mRows; i++) {
+      for (size_t j = 0; j < mCols; j++) {
+	float val = mm[i][j];
+	mm[i][j] = func(val);
+      }
+    }
+  }
+
+  std::vector<float> toArray(){
+    std::vector<float> arr;
+    for (size_t i = 0; i < mRows; i++) {
+      for (size_t j = 0; j < mCols; j++) {
+	arr.push_back(mm[i][j]);
+      }
+    }
+    return arr;
+  }
+};

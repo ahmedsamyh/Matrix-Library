@@ -1,0 +1,41 @@
+#include "Matrix.h"
+#include <cassert>
+#include <vector>
+#include <iostream>
+
+// Print Matrix
+#define PRINT(m)                                                               \
+  std::cout << #m << ":\n";                                                    \
+  for (size_t c = 0; c < m.getCols() * 2 + 1; c++) {                           \
+    std::cout << "-";                                                          \
+  }                                                                            \
+  std::cout << "\n";                                                           \
+  m.print();                                                                   \
+  for (size_t c = 0; c < m.getCols() * 2 + 1; c++) {                           \
+    std::cout << "-";                                                          \
+  }                                                                            \
+  std::cout << "\n";
+
+template <typename T>
+void printVector(std::vector<T> arr){
+  for (size_t i = 0; i < arr.size(); i++){
+    std::cout << arr[i] << (i == arr.size()-1 ? "\n" : ", ");
+  }
+}
+
+
+int main() {
+  srand(time(0));
+
+  Matrix<2, 2> m1;
+
+  m1.random();
+
+  PRINT(m1);
+
+  std::vector<float> v;
+
+  // v.push_back(1.f);
+  
+  return 0;
+}
